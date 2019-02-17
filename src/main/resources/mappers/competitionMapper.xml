@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.msa.console.dao.CompetitionDao">
+
+    <insert id="insCompetition" parameterType="com.msa.console.model.CompetitionModel">
+    	INSERT INTO concpm(
+						      tenant_id,
+							  cp_cd,
+							  cp_nm,
+							  cp_start_dt,
+							  cp_end_dt,
+							  cp_place_nm,
+							  cp_scale_cd, 
+							  cp_type_cd,
+							  expect_user_num,
+							  crt_id,
+							  crt_ip,
+							  ad_date,
+							  udt_id,
+							  udt_ip,
+							  udt_date
+							  )
+					VALUES (
+							  #{tenantId},
+							  #{cpCd},
+							  #{cpNm},
+							  #{cpStartDt},
+							  #{cpEndDt},
+							  #{cpPlaceNm},
+							  #{cpScaleCd},
+							  #{cpTypeCd},
+							  #{expectUserNum},
+							  #{crtId},
+							  #{crtIp},
+							  current_timestamp,
+							  #{udtId},
+							  #{udtIp},
+							  current_timestamp
+							  )
+    </insert>
+    
+    <update id="upCompetition" parameterType="com.msa.console.model.CompetitionModel">
+    	UPDATE concpm
+    	   SET cp_nm = #{cpNm},
+			   cp_start_dt = #{cpStartDt},
+			   cp_end_dt = #{cpEndDt},
+			   cp_place_nm = #{cpPlaceNm},
+			   cp_scale_cd = #{cpScaleCd},
+			   cp_type_cd = #{cpTypeCd},
+			   expect_user_num = #{expectUserNum},
+			   udt_id = #{udtId},
+			   udt_ip = #{udtIp},
+			   udt_date = current_timestamp
+         WHERE tenant_id = #{tenantId}	
+           AND cp_cd = #{cpCd}		   
+    </update>
+    
+    <select id="selListCompetition" parameterType="com.msa.console.model.CompetitionModel" resultType="com.msa.console.model.CompetitionExtModel">
+    	SELECT COUNT(1) OVER() AS totalCount,
+        	   cust.mgr_nm as mgrNm,
+               cust.mgr_tel_no as mgrTelNo,
+               cont.cont_nm as contNm,
+    		   cp.tenant_id as tenantId,
+			   cp.cp_cd as cpCd,
+			   cp.cp_nm as cpNm,
+			   cp.cp_start_dt as cpStartDt,
+			   cp.cp_end_dt as cpEndDt,
+			   cp.cp_place_nm as cpPlaceNm,
+			   cp.cp_scale_cd as cpScaleCd, 
+			   cp.cp_type_cd as cpTypeCd,
+			   cp.expect_user_num as expectUserNum,
+			   cp.crt_id as crtId,
+			   cp.crt_ip as crtIp,
+			   cp.ad_date as adDate,
+			   cp.udt_id as udtId,
+			   cp.udt_ip as udtIp,
+			   cp.udt_date as udtDate
+		  FROM concustm cust, concustcontm cont, concpm cp
+         WHERE cust.cust_id = cont.cust_id
+           AND cont.tenant_id = cp.tenant_id
+      order by cp.tenant_id desc  
+    	 LIMIT #{rowPerPage} OFFSET #{skipCount}   
+    </select>
+    
+    <select id="selCompetition" parameterType="com.msa.console.model.CompetitionModel" resultType="com.msa.console.model.CompetitionExtModel">
+    	SELECT COUNT(1) OVER() AS totalCount,
+        	   cust.mgr_nm as mgrNm,
+               cust.mgr_tel_no as mgrTelNo,
+               cont.cont_nm as contNm,
+    		   cp.tenant_id as tenantId,
+			   cp.cp_cd as cpCd,
+			   cp.cp_nm as cpNm,
+			   cp.cp_start_dt as cpStartDt,
+			   cp.cp_end_dt as cpEndDt,
+			   cp.cp_place_nm as cpPlaceNm,
+			   cp.cp_scale_cd as cpScaleCd, 
+			   cp.cp_type_cd as cpTypeCd,
+			   cp.expect_user_num as expectUserNum,
+			   cp.crt_id as crtId,
+			   cp.crt_ip as crtIp,
+			   cp.ad_date as adDate,
+			   cp.udt_id as udtId,
+			   cp.udt_ip as udtIp,
+			   cp.udt_date as udtDate
+		  FROM concustm cust, concustcontm cont, concpm cp
+         WHERE cust.cust_id = cont.cust_id
+           AND cont.tenant_id = cp.tenant_id
+           AND cont.tenant_id = #{tenantId}
+           AND cp.cp_cd = #{cpCd}
+    </select>
+    
+    <delete id="delCompetition" parameterType="com.msa.console.model.CompetitionModel">
+    	DELETE FROM concpm
+         WHERE tenant_id = #{tenantId}	
+           AND cp_cd = #{cpCd}		   
+    </delete>
+    
+    <select id="selListCompetitionImage" parameterType="com.msa.console.model.CompetitionImageModel" resultType="com.msa.console.model.CompetitionImageModel">
+    	SELECT tenant_id as tenantId,
+    		   cp_cd as cpCd,
+    		   img_fg_cd as imgFgCd,
+    		   img_seq as imgSeq,
+    		   file_path_nm as filePathNm,
+    		   img_file_nm as imgFileNm,
+    		   rep_img_yn as repImgYn,
+    		   crt_id as crtId,
+    		   crt_id as crtId,
+			   crt_ip as crtIp,
+			   ad_date as adDate,
+			   udt_id as udtId,
+			   udt_ip as udtIp,
+			   udt_date as udtDate
+		  FROM concpimgm
+		 WHERE tenant_id = #{tenantId}
+		   AND cp_cd = #{cpCd}	   
+    </select>
+    
+    <insert id="insCompetitionImage" parameterType="com.msa.console.model.CompetitionImageModel">
+    	INSERT INTO concpimgm(
+						      tenant_id,
+							  cp_cd,
+							  img_fg_cd,
+							  img_seq,
+							  file_path_nm,
+							  img_file_nm,
+							  source_img_file_nm,
+							  rep_img_yn, 
+							  crt_id,
+							  crt_ip,
+							  ad_date,
+							  udt_id,
+							  udt_ip,
+							  udt_date
+							  )
+					VALUES (
+							  #{tenantId},
+							  #{cpCd},
+							  #{imgFgCd},
+							  #{imgSeq},
+							  #{filePathNm},
+							  #{imgFileNm},
+							  #{sourceImgFileNm},
+							  #{repImgYn},
+							  #{crtId},
+							  #{crtIp},
+							  current_timestamp,
+							  #{udtId},
+							  #{udtIp},
+							  current_timestamp
+							  )
+    </insert>
+    
+    <delete id="delCompetitionImage" parameterType="com.msa.console.model.CompetitionImageModel">
+    	DELETE FROM concpimgm
+         WHERE tenant_id = #{tenantId}	
+           AND cp_cd = #{cpCd}		   
+    </delete>
+</mapper>

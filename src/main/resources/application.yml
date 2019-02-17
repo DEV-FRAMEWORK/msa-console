@@ -1,0 +1,42 @@
+spring:
+  devtools:
+    livereload:
+      enabled: true
+    freemarker:
+      cache: false
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+  datasource:
+    type: org.apache.tomcat.jdbc.pool.DataSource
+    driverClassName: org.postgresql.Driver
+#    url: jdbc:postgresql://sport-saas-psql.cf37vedvxld3.ap-northeast-2.rds.amazonaws.com:5432/sportsaas?autoReconnect=true&useSSL=false
+    url: jdbc:postgresql://localhost:5432/journal?autoReconnect=true&useSSL=false
+    username: redmine
+    #password: ENC(2L3MvBFx+sCd0DQ79sMY6wR0bJvSGq3R)
+    password: redmine!@
+    
+mybatis:
+  mapper-locations: classpath:mappers/**/*.xml
+  configuration:
+    lazyLoadingEnabled: true
+    aggressiveLazyLoading: false
+    mapUnderscoreToCamelCase: true
+        
+    
+    
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    password: gigageniefortune
+    
+
+server:
+  port: 8080
+  context-path: /
+  jsp-servlet:
+    init-parameters: 
+      developement: true
+      
+

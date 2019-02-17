@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.msa.console.dao.ContractDao">
+	<select id="selListContract" resultType="com.msa.console.model.ContractExtModel">
+		SELECT COUNT(1) OVER() AS totalCount
+			   ,cust.cust_id as custId 
+		       , cust.cust_nm as custNm 
+		       , cust.rep_fax_no as repFaxNo
+		       , cust.rep_tel_no as repTelNo
+		       , cust.corp_ad_no as corpAdNo
+		       , cust.mgr_nm as mgrNm
+		       , cust.mgr_email_addr as mgrEmailAddr
+		       , cust.mgr_tel_no as mgrTelNo
+		       , cont.tenant_id as tenantId
+		       , cont.cont_nm as contNm
+		       , cont.valid_start_dt as validStartDt
+		       , cont.valid_end_dt as validEndDt
+		       , cont.cont_stat_cd as contStatCd
+		       , cont.network_fg_cd as networkFgCd
+		       , cont.password_lod_cd as passwordLodCd
+		       , cont.password_min_len as passwordMinLen
+		       , cont.password_rnwl_cycl_cd as passwordRnwlCyclCd
+		       , cont.password_use_lmt_yn as passwordUseLmtYn
+		       , cont.password_pose_yn as passwordPoseYn
+		       , cont.ad_date as adDate
+		       , cont.udt_date as udtDate
+		FROM con.concustm cust
+		INNER JOIN con.concustcontm cont
+		ON cust.cust_id=cont.cust_id
+		order by udtDate desc   
+		LIMIT #{rowPerPage} OFFSET #{skipCount}
+    </select>
+    
+    <select id="selListCust" resultType="com.msa.console.model.ContractExtModel">
+		SELECT COUNT(1) OVER() AS totalCount
+		       ,cust.cust_id as custId 
+		       , cust.cust_nm as custNm 
+		       , cust.rep_fax_no as repFaxNo
+		       , cust.rep_tel_no as repTelNo
+		       , cust.corp_ad_no as corpAdNo
+		       , cust.mgr_nm as mgrNm
+		       , cust.mgr_email_addr as mgrEmailAddr
+		       , cust.mgr_tel_no as mgrTelNo
+		FROM concustm cust
+		ORDER BY custId DESC   
+		LIMIT #{rowPerPage} OFFSET #{skipCount}
+    </select>
+    
+    
+    <select id="selListContractCnt" resultType="com.msa.console.model.ContractExtModel">
+		SELECT COUNT(1) OVER() AS totalCount
+		FROM concustm 
+		WHERE cust_id =  #{custId}
+    </select>
+    
+    <select id="selListCustCnt" resultType="com.msa.console.model.ContractExtModel">
+		SELECT COUNT(1) OVER() AS totalCount
+		FROM concustcontm 
+		WHERE cust_id =  #{custId}
+		LIMIT 1
+    </select>
+    
+    <select id="selContract" resultType="com.msa.console.model.ContractExtModel">
+		SELECT 	 cust.cust_id as custId 
+		       , cust.cust_nm as custNm 
+		       , cust.rep_fax_no as repFaxNo
+		       , cust.rep_tel_no as repTelNo
+		       , cust.corp_ad_no as corpAdNo
+		       , cust.mgr_nm as mgrNm
+		       , cust.mgr_email_addr as mgrEmailAddr
+		       , cust.mgr_tel_no as mgrTelNo
+		       , cont.tenant_id as tenantId
+		       , cont.cont_nm as contNm
+		       , cont.valid_start_dt as validStartDt
+		       , cont.valid_end_dt as validEndDt
+		       , cont.cont_stat_cd as contStatCd
+		       , cont.network_fg_cd as networkFgCd
+		       , cont.password_lod_cd as passwordLodCd
+		       , cont.password_min_len as passwordMinLen
+		       , cont.password_rnwl_cycl_cd as passwordRnwlCyclCd
+		       , cont.password_use_lmt_yn as passwordUseLmtYn
+		       , cont.password_pose_yn as passwordPoseYn
+		       , cont.ad_date as adDate
+		       , cont.udt_date as udtDate
+		FROM con.concustm cust
+		INNER JOIN con.concustcontm cont
+		ON cust.cust_id=cont.cust_id
+		WHERE cust.cust_id = #{custId}
+		AND   cont.tenant_id = #{tenantId}
+    </select>
+    
+    <insert id="insContract" parameterType="com.msa.console.model.ContractModel">
+    	INSERT INTO concustcontm(
+						      tenant_id,
+							  cust_id,
+							  cont_nm,
+							  valid_start_dt,
+							  valid_end_dt,
+							  cont_stat_cd,
+							  network_fg_cd,
+							  password_lod_cd,
+							  password_min_len,
+							  password_rnwl_cycl_cd,
+							  password_use_lmt_yn,
+							  password_pose_yn,
+							  crt_id,
+							  crt_ip,
+							  ad_date,
+							  udt_id,
+							  udt_ip,
+							  udt_date
+							  )
+					VALUES (
+							  #{tenantId},
+							  #{custId},
+							  #{contNm},
+							  #{validStartDt},
+							  #{validEndDt},
+							  #{contStatCd},
+							  #{networkFgCd},
+							  #{passwordLodCd},
+							  #{passwordMinLen},
+							  #{passwordRnwlCyclCd},
+							  #{passwordUseLmtYn},
+							  #{passwordPoseYn},
+							  #{crtId},
+							  #{crtIp},
+							  current_timestamp,
+							  #{udtId},
+							  #{udtIp},
+							  current_timestamp
+							  )
+    </insert>
+    
+    <delete id="delCust" parameterType="com.msa.console.model.ContractExtModel">
+        DELETE FROM concustm WHERE cust_id = '${custId}'
+    </delete>
+    
+    <delete id="delContract" parameterType="com.msa.console.model.ContractExtModel">
+        DELETE FROM concustcontm WHERE tenant_id = '${tenantId}'
+    </delete>
+    
+    <update id="upCust" parameterType="com.msa.console.model.ContractExtModel">
+    	 UPDATE concustm
+    	   SET cust_nm = #{custNm},
+			   rep_fax_no = #{repFaxNo},
+			   rep_tel_no = #{repTelNo},
+			   corp_ad_no = #{corpAdNo},
+			   mgr_nm = #{mgrNm},
+			   mgr_email_addr = #{mgrEmailAddr},
+			   mgr_tel_no = #{mgrTelNo},
+			   udt_id = #{udtId},
+			   udt_ip = #{udtIp},
+			   udt_date = current_timestamp
+         WHERE cust_id = #{custId}		   
+    </update>
+    
+    <update id="upContract" parameterType="com.msa.console.model.ContractExtModel">
+    	 UPDATE concustcontm
+    	   SET cont_nm = #{contNm},
+			   valid_start_dt = #{validStartDt},
+			   valid_end_dt = #{validEndDt},
+			   cont_stat_cd = #{contStatCd},
+			   network_fg_cd = #{networkFgCd},
+			   password_lod_cd = #{passwordLodCd},
+			   password_min_len = #{passwordMinLen},
+			   password_rnwl_cycl_cd = #{passwordRnwlCyclCd},
+			   password_use_lmt_yn= #{passwordUseLmtYn},
+			   password_pose_yn= #{passwordPoseYn},
+			   udt_id = #{udtId},
+			   udt_ip = #{udtIp},
+			   udt_date = current_timestamp
+         WHERE tenant_id = #{tenantId}			   
+    </update>
+</mapper>

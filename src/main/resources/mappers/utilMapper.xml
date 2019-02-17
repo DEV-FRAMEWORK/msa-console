@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.msa.console.dao.UtilDao">
+
+    <select id="selTenantIdSeq" resultType="int">
+    	select nextval('concustcontm_tenant_id_seq')
+    </select>
+    
+    <select id="searchContract" parameterType="java.util.Map" resultType="com.msa.console.model.ContractExtModel">
+    	SELECT cust.cust_id as custId 
+		       , cust.cust_nm as custNm 
+		       , cust.rep_fax_no as repFaxNo
+		       , cust.rep_tel_no as repTelNo
+		       , cust.corp_ad_no as corpAdNo
+		       , cust.mgr_nm as mgrNm
+		       , cust.mgr_email_addr as mgrEmailAddr
+		       , cust.mgr_tel_no as mgrTelNo
+		       , cont.tenant_id as tenantId
+		       , cont.cont_nm as contNm
+		       , cont.valid_start_dt as validStartDt
+		       , cont.valid_end_dt as validEndDt
+		       , cont.cont_stat_cd as contStatDd
+		       , cont.network_fg_cd as networkFgCd
+		       , cont.password_lod_cd as passwordLodCd
+		       , cont.password_min_len as passwordMinLen
+		       , cont.password_rnwl_cycl_cd as passwordRnwlCyclCd
+		       , cont.password_pose_yn as passwordPoseYn
+		       , cont.ad_date as adDate
+		       , cont.udt_date as udtDate
+		FROM concustm cust, concustcontm cont
+	   WHERE cust.cust_id = cont.cust_id
+	     <if test='searchType!=null'>
+	     <if test='searchValue!=null'>
+	     <if test='searchType=="C"'>
+	     AND cont_nm like #{searchValue}||'%'
+	     </if>
+	     <if test='searchType=="T"'>
+	     AND tenant_id like #{searchValue}||'%'
+	     </if>
+	     </if>
+	     </if>
+	   order by cont.udt_Date desc   
+    </select>
+    
+    
+    <select id="searchCompetition" parameterType="java.util.Map" resultType="com.msa.console.model.CompetitionModel">
+    	SELECT 
+		       cpm.tenant_id as tenantId
+		       , cpm.cp_cd as cpCd
+		       , cpm.cp_nm as cpNm
+		FROM con.concpm as cpm
+	   WHERE 1=1
+	     <if test='searchType!=null'>
+	     <if test='searchValue!=null'>
+	     <if test='searchType=="C"'>
+	     AND cp_cd like #{searchValue}||'%'
+	     </if>
+	     <if test='searchType=="N"'>
+	     AND cp_nm like #{searchValue}||'%'
+	     </if>
+	     </if>
+	     </if>
+	   order by cpm.udt_Date desc   
+    </select>
+    
+    <select id="selListCompetitionImageMaxSeq" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT img_fg_cd as imgFgCd, max(img_seq) + 1 as imgSeq  
+    	  FROM concpimgm 
+    	 WHERE tenant_id = #{tenantId}
+    	   AND cp_cd = #{cpCd}
+    	 group by img_fg_cd   
+    </select>
+    
+    
+</mapper>
